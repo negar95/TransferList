@@ -10,6 +10,7 @@ import Foundation
 typealias RequestHeaders = [String: String]
 typealias RequestParameters = [String: Any]
 enum RequestMethod: String { case get = "GET" }
+enum URLScheme: String { case https }
 
 protocol RequestProtocol {
     var baseURL: String { get }

@@ -8,7 +8,9 @@
 import Foundation
 
 extension RequestProtocol {
-    var baseURL: String { APIConfig.baseURL }
+    var scheme: URLScheme { .https }
+    var host: String { APIConfig.host }
+    var baseURL: String { "\(scheme)://\(host)" }
     var timeoutInterval: TimeInterval { 30.0 }
     var retryDelay: UInt64 { 1_000_000_000 }
     var retryCount: Int { 3 }
