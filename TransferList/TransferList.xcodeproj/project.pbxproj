@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		896CEF6F2E5A090D00F92AC1 /* AppDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 896CEF6E2E5A090D00F92AC1 /* AppDomain */; };
 		89884ED52E5775FB00607720 /* AppUI in Frameworks */ = {isa = PBXBuildFile; productRef = 89884ED42E5775FB00607720 /* AppUI */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		895F71002E58C1B3007EBD46 /* AppDomain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AppDomain; sourceTree = "<group>"; };
 		89884E872E574C0800607720 /* TransferList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TransferList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89884E9D2E574C0A00607720 /* TransferListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransferListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		89884EA72E574C0A00607720 /* TransferListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransferListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				896CEF6F2E5A090D00F92AC1 /* AppDomain in Frameworks */,
 				89884ED52E5775FB00607720 /* AppUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				89884ED72E577D0800607720 /* AppFoundation */,
+				895F71002E58C1B3007EBD46 /* AppDomain */,
 				89884ED62E57765600607720 /* AppUI */,
 				89884E892E574C0800607720 /* TransferList */,
 				89884EA02E574C0A00607720 /* TransferListTests */,
@@ -135,6 +139,7 @@
 			name = TransferList;
 			packageProductDependencies = (
 				89884ED42E5775FB00607720 /* AppUI */,
+				896CEF6E2E5A090D00F92AC1 /* AppDomain */,
 			);
 			productName = TransferList;
 			productReference = 89884E872E574C0800607720 /* TransferList.app */;
@@ -296,6 +301,8 @@
 /* Begin XCBuildConfiguration section */
 		89884EB12E574C0A00607720 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -327,6 +334,8 @@
 		};
 		89884EB22E574C0A00607720 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -358,6 +367,8 @@
 		};
 		89884EB32E574C0A00607720 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -421,6 +432,8 @@
 		};
 		89884EB42E574C0A00607720 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -477,6 +490,8 @@
 		};
 		89884EB62E574C0A00607720 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -495,6 +510,8 @@
 		};
 		89884EB72E574C0A00607720 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -513,6 +530,8 @@
 		};
 		89884EB92E574C0A00607720 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -529,6 +548,8 @@
 		};
 		89884EBA2E574C0A00607720 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 89884E892E574C0800607720 /* TransferList */;
+			baseConfigurationReferenceRelativePath = Configs/SharedConfig.xcconfig;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -585,6 +606,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		896CEF6E2E5A090D00F92AC1 /* AppDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppDomain;
+		};
 		89884ED42E5775FB00607720 /* AppUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppUI;
