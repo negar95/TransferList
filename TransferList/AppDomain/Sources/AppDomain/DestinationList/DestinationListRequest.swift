@@ -8,7 +8,7 @@
 import Foundation
 
 enum DestinationListRequest {
-    case list(page: Int)
+    case list(page: UInt)
 }
 
 extension DestinationListRequest: RequestProtocol {

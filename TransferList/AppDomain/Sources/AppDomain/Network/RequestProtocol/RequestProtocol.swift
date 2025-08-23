@@ -19,6 +19,7 @@ protocol RequestProtocol {
     var headers: RequestHeaders? { get }
     var timeoutInterval: TimeInterval { get }
     var retryDelay: UInt64 { get }
+    var retryCount: Int { get }
 
     func urlRequest() throws -> URLRequest
     func verifyResponse(data: Data, response: URLResponse) throws -> (Data, URLResponse)

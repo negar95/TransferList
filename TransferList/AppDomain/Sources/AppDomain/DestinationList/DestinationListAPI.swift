@@ -9,7 +9,7 @@ import Foundation
 import AppFoundation
 
 public protocol DestinationListAPIProtocol {
-    func list(page: Int) async throws -> [DestinationResponse]
+    func list(page: UInt) async throws -> [DestinationResponse]
 }
 
 public final class DestinationListAPI: DestinationListAPIProtocol {
@@ -18,8 +18,8 @@ public final class DestinationListAPI: DestinationListAPIProtocol {
     @Injected(Dependencies.shared.jsonDecoderFactory) private var jsonDecoder: JSONDecoder
 
     public init() {}
-    public func list(page: Int) async throws -> [DestinationResponse] {
-        let (data, _) = try await networkManager.request(DestinationListRequest.list(page: page), retryCount: 3)
+    public func list(page: UInt) async throws -> [DestinationResponse] {
+        let (data, _) = try await networkManager.request(DestinationListRequest.list(page: page))
         return try jsonDecoder.decode([DestinationResponse].self, from: data)
     }
 }

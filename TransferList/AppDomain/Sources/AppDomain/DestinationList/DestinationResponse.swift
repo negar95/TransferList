@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DestinationResponse: Codable {
+public struct DestinationResponse: Codable, Sendable {
     let person: Person
     let card: Card
     let lastTransfer: Date
