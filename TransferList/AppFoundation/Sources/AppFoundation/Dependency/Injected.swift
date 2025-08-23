@@ -8,14 +8,19 @@
 import Foundation
 
 @propertyWrapper
-public final class Injected<T> {
+public final class Injected<T>: @unchecked Sendable where T: Sendable {
     private let factory: () -> T
     private var cached: T?
+    private let lock = NSLock()
 
     public var wrappedValue: T {
+        lock.lock()
+        defer { lock.unlock() }
+
         if let cached = cached {
             return cached
         }
+
         let instance = factory()
         cached = instance
         return instance
