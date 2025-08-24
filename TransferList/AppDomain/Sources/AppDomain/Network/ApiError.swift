@@ -1,5 +1,5 @@
 //
-//  APIError.swift
+//  ApiError.swift
 //  AppDomain
 //
 //  Created by Negar Moshtaghi on 8/22/25.
@@ -7,13 +7,13 @@
 
 import Foundation
 
-enum APIError: Error, Equatable {
+enum ApiError: Error, Equatable {
     case badRequest
     case authorizationError
     case serverError
     case unknown
 }
-extension APIError: CustomStringConvertible {
+extension ApiError: CustomStringConvertible {
     var description: String {
         switch self {
         case .badRequest:
@@ -27,6 +27,6 @@ extension APIError: CustomStringConvertible {
         }
     }
 }
-extension APIError: LocalizedError {
+extension ApiError: LocalizedError {
     var errorDescription: String? { description }
 }

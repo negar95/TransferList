@@ -17,10 +17,10 @@ extension RequestProtocol {
     }
 
     private func url() throws -> URL {
-        guard var urlComponents = URLComponents(string: baseURL) else { throw APIError.badRequest }
+        guard var urlComponents = URLComponents(string: baseURL) else { throw ApiError.badRequest }
         urlComponents.path = urlComponents.path + path
         urlComponents.queryItems = queryItems
-        guard let finalURL = urlComponents.url else { throw APIError.badRequest }
+        guard let finalURL = urlComponents.url else { throw ApiError.badRequest }
         return finalURL
     }
 
@@ -33,18 +33,18 @@ extension RequestProtocol {
     }
 
     func verifyResponse(data: Data, response: URLResponse) throws -> (Data, URLResponse) {
-        guard let httpResponse = response as? HTTPURLResponse else { throw APIError.unknown }
+        guard let httpResponse = response as? HTTPURLResponse else { throw ApiError.unknown }
         switch httpResponse.statusCode {
         case 200...299:
             return (data, response)
         case 401:
-            throw APIError.authorizationError
+            throw ApiError.authorizationError
         case 400...499:
-            throw APIError.badRequest
+            throw ApiError.badRequest
         case 500...599:
-            throw APIError.serverError
+            throw ApiError.serverError
         default:
-            throw APIError.unknown
+            throw ApiError.unknown
         }
     }
 }

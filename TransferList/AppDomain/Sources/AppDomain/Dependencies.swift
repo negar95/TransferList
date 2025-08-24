@@ -20,7 +20,8 @@ final class Dependencies: @unchecked Sendable {
     var networkManagerFactory: () -> NetworkManagerProtocol {
         return { [weak self] in
             guard let self else { return NetworkManager() }
-            return lock.withLock {
+            return lock.withLock { [weak self] in
+                guard let self else { return NetworkManager() }
                 if let existingValue = _networkManager { return existingValue }
                 let newValue = NetworkManager()
                 _networkManager = newValue
@@ -31,7 +32,8 @@ final class Dependencies: @unchecked Sendable {
     var jsonDecoderFactory: () -> JSONDecoder {
         return { [weak self] in
             guard let self else { return JSONDecoder() }
-            return lock.withLock {
+            return lock.withLock { [weak self] in
+                guard let self else { return JSONDecoder() }
                 if let existing = _jsonDecoder { return existing }
                 let newValue = JSONDecoder()
                 newValue.dateDecodingStrategy = .iso8601
@@ -43,7 +45,8 @@ final class Dependencies: @unchecked Sendable {
     var urlSessionFactory: () -> URLSession {
         return { [weak self] in
             guard let self else { return URLSession(configuration: .default) }
-            return lock.withLock {
+            return lock.withLock { [weak self] in
+                guard let self else { return URLSession(configuration: .default) }
                 if let existingValue = _urlSession { return existingValue }
                 let newValue = URLSession(configuration: .default)
                 _urlSession = newValue

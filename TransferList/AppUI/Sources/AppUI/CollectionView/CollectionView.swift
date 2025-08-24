@@ -1,5 +1,5 @@
 //
-//  CollectionViewController.swift
+//  CollectionView.swift
 //  AppUI
 //
 //  Created by Negar Moshtaghi on 8/21/25.
@@ -8,39 +8,58 @@
 import UIKit
 import AppFoundation
 
-final public class CollectionViewController: UICollectionViewController {
-    
+final public class CollectionView: UIView {
+
+    private lazy var collectionView: UICollectionView = {
+        let view = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var emptyView: EmptyView = EmptyView()
+    private lazy var loadingView: UIActivityIndicatorView = UIActivityIndicatorView(style: .large)
     private var dataSource: UICollectionViewDiffableDataSource<Int, String>?
     private var registeredCells: Set<String> = []
 
     public var sections: [any CollectionViewSection] = [] {
-        didSet {
-            registerCells()
-            setupLayout()
-            setupDataSource()
-            reload()
-        }
+        didSet { updateViews() }
+    }
+    public var showEmpty: Bool = false {
+        didSet { updateEmptyView() }
+    }
+    public var showLoading: Bool = false {
+        didSet { updateLoadingView() }
     }
 
     public init() {
-        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        super.init(frame: .zero)
+        setupView()
+    }
+    required init?(coder: NSCoder) {
+        fatalError()
     }
 
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
+    private func setupView() {
+        addSubview(collectionView)
+        collectionView.constraintToEdges(of: self)
     }
-
-    public override func viewDidLoad() {
-        super.viewDidLoad()
+    private func updateViews() {
+        updateCollectionView()
+        updateEmptyView()
+        updateLoadingView()
+    }
+    private func updateCollectionView() {
+        guard !sections.isEmpty else { return }
+        registerCells()
         setupLayout()
+        setupDataSource()
+        reload()
     }
-    
-    private func setupLayout() {
-        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
-            return self?.sections[safe: sectionIndex]?.layoutSection ?? .vertical
-        }
+    private func updateEmptyView() {
+        collectionView.backgroundView = showEmpty ? emptyView : nil
     }
-
+    private func updateLoadingView() {
+        collectionView.backgroundView = showLoading ? loadingView : nil
+    }
     private func registerCells() {
         for section in sections {
             for item in section.items {
@@ -52,7 +71,11 @@ final public class CollectionViewController: UICollectionViewController {
             }
         }
     }
-
+    private func setupLayout() {
+        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            return self?.sections[safe: sectionIndex]?.layoutSection ?? .vertical
+        }
+    }
     private func setupDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Int, String>(collectionView: collectionView) {
             [weak self] collectionView, indexPath, itemIdentifier in

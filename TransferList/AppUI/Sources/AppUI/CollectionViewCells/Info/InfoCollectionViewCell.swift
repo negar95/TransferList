@@ -24,6 +24,9 @@ final public class InfoCollectionViewCell: UICollectionViewCell, CollectionViewC
 
     }
 
+    private var onButtonTap: (() -> Void)?
+    @objc private func didTapOnButton() { onButtonTap?() }
+
     private lazy var stackView: UIStackView = {
         let view: UIStackView = UIStackView(arrangedSubviews: [
             imageView, infoStackView, button, icon
@@ -57,31 +60,35 @@ final public class InfoCollectionViewCell: UICollectionViewCell, CollectionViewC
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .systemFont(ofSize: 14, weight: .regular)
+        view.font = .body
         return view
     }()
     private lazy var subtitleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .systemFont(ofSize: 14, weight: .regular)
+        view.font = .description
         return view
     }()
     private lazy var button: UIButton = {
         let view = UIButton(type: .custom)
+        view.tintColor = .orange
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.buttonSize)
+        view.addTarget(self, action: #selector(didTapOnButton), for: .touchUpInside)
         return view
     }()
     private lazy var icon: UIImageView = {
         let view = UIImageView()
+        view.tintColor = .gray
         view.contentMode = .scaleAspectFit
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.iconSize)
         return view
     }()
 
-    public func updateViews(with item: any CollectionViewItem) {
-        guard let item = item.cellData as? InfoItemData else { return }
+    public func updateViews(with collectionItem: any CollectionViewItem) {
+        guard let item = collectionItem.cellData as? InfoItemData else { return }
+        onButtonTap = item.onButtonTap
         titleLabel.text = item.title
         subtitleLabel.text = item.subtitle
         imageView.sd_setImage(with: item.image)
@@ -93,6 +100,7 @@ final public class InfoCollectionViewCell: UICollectionViewCell, CollectionViewC
         subtitleLabel.text = nil
         imageView.sd_cancelCurrentImageLoad()
         imageView.image = nil
+        onButtonTap = nil
     }
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -104,7 +112,7 @@ final public class InfoCollectionViewCell: UICollectionViewCell, CollectionViewC
     }
 
     private func setupConstraints() {
-        stackView.constraintToEdges(contentView)
+        stackView.constraintToEdges(of: contentView)
     }
     private func setupViews() {
         contentView.addSubview(stackView)

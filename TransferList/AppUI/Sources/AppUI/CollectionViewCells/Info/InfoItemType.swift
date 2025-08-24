@@ -7,7 +7,7 @@
 
 import UIKit
 
-public enum InfoItemType {
+public enum InfoItemType: Equatable {
     case compact
     case detailed(isFavorite: Bool)
 }
