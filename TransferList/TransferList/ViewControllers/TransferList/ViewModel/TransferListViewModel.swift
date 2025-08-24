@@ -158,17 +158,6 @@ final class TransferListViewModel: TransferListViewModelProtocol {
     }
 }
 
-fileprivate extension InfoItemType {
-    var rawValue: String {
-        switch self {
-        case .compact:
-            return "compact"
-        case let .detailed(isFavorite):
-            return isFavorite ? "detailed-favorite" : "detailed-not-favorite"
-        }
-    }
-}
-
 fileprivate extension InfoItemData {
     init(
         _ destination: DestinationResponse,
@@ -177,7 +166,7 @@ fileprivate extension InfoItemData {
         onButtonTap: (() -> Void)? = nil
     ) {
         self.init(
-            stringId: destination.id + type.rawValue,
+            stringId: destination.id + type.hashValue.description,
             title: destination.fullName,
             subtitle: destination.email,
             image: destination.image,

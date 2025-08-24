@@ -72,11 +72,13 @@ final public class CollectionView: UIView {
         }
     }
     private func setupLayout() {
+        guard collectionView.collectionViewLayout is UICollectionViewFlowLayout else { return }
         collectionView.collectionViewLayout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
             return self?.sections[safe: sectionIndex]?.layoutSection ?? .vertical
         }
     }
     private func setupDataSource() {
+        guard dataSource == nil else { return }
         dataSource = UICollectionViewDiffableDataSource<Int, String>(collectionView: collectionView) {
             [weak self] collectionView, indexPath, itemIdentifier in
 
