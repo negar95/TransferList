@@ -7,7 +7,12 @@
 
 import Foundation
 
-public struct DestinationResponse: Codable, Sendable {
+public struct DestinationResponse: Codable, Sendable, Equatable {
+    public var id: String { fullName + (email ?? "nil") }
+    public var fullName: String { person.fullName }
+    public var email: String? { person.email }
+    public var image: URL? { person.avatar }
+
     let person: Person
     let card: Card
     let lastTransfer: Date
@@ -20,17 +25,17 @@ public struct DestinationResponse: Codable, Sendable {
         case moreInfo = "more_info"
     }
 
-    struct Person: Codable {
+    struct Person: Codable, Equatable {
         let fullName: String
         let email: String?
-        let avatar: URL
+        let avatar: URL?
 
         enum CodingKeys: String, CodingKey {
             case fullName = "full_name"
             case email, avatar
         }
     }
-    struct Card: Codable {
+    struct Card: Codable, Equatable {
         let cardNumber: String
         let cardType: String
 
@@ -39,7 +44,7 @@ public struct DestinationResponse: Codable, Sendable {
             case cardType = "card_type"
         }
     }
-    struct MoreInfo: Codable {
+    struct MoreInfo: Codable, Equatable {
         let numberOfTransfers: Int
         let totalTransfer: Int
 

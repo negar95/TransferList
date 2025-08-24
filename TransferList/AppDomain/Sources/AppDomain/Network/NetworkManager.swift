@@ -17,14 +17,14 @@ final class NetworkManager: NetworkManagerProtocol, @unchecked Sendable {
     init() {}
     func request(_ request: RequestProtocol) async throws -> (Data, URLResponse) {
         let apiRequest = try request.urlRequest()
-        var lastError: Error = APIError.unknown
+        var lastError: Error = ApiError.unknown
 
         for retryIndex in 0 ..< request.retryCount {
             try Task.checkCancellation()
             do {
                 let (data, response) = try await urlSession.data(for: apiRequest)
                 return try request.verifyResponse(data: data, response: response)
-            } catch let apiError as APIError where [.badRequest, .authorizationError].contains(apiError) {
+            } catch let apiError as ApiError where [.badRequest, .authorizationError].contains(apiError) {
                 throw apiError
             } catch where retryIndex < request.retryCount - 1 {
                 try await Task.sleep(nanoseconds: request.retryDelay * UInt64(pow(2, Double(retryIndex))))

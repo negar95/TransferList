@@ -8,7 +8,13 @@
 import UIKit
 
 extension UIView {
-    func constraintToEdges(_ view: UIView) {
+    public func constraintToCenter(of view: UIView) {
+        NSLayoutConstraint.activate([
+            centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    public func constraintToEdges(of view: UIView) {
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: view.leadingAnchor),
             trailingAnchor.constraint(equalTo: view.trailingAnchor),
