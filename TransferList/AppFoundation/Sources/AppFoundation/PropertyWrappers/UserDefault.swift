@@ -12,7 +12,7 @@ public struct UserDefault<Value: Codable> {
     let key: String
     let defaultValue: Value
     let storage: UserDefaults
-    
+
     public init(
         _ key: String,
         default defaultValue: Value,
@@ -22,7 +22,6 @@ public struct UserDefault<Value: Codable> {
         self.defaultValue = defaultValue
         self.storage = storage
     }
-    
     public var wrappedValue: Value {
         get {
             if let data = storage.data(forKey: key) {

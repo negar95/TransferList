@@ -16,11 +16,13 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         static let startPage: UInt = 1
     }
 
-    var state: CurrentValueSubject<TransferListViewModelState, Never>
-    private var stateValue: TransferListViewModelState { state.value }
     @Injected(Dependencies.shared.destinationListApiFactory) private var api: DestinationListApiProtocol
     @UserDefault(UserDefaultKeys.favorites.rawValue, default: []) private var favorites: [String]
+
+    var state: CurrentValueSubject<TransferListViewModelState, Never>
     private var loadingTask: Task<Void, Never>?
+
+    private var stateValue: TransferListViewModelState { state.value }
 
     init() {
         state = CurrentValueSubject<TransferListViewModelState, Never>(
@@ -61,16 +63,16 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         )
     }
     private func getTransfers() {
-        guard stateValue.sections != .isLoading,
-              loadingTask == nil,
-              case let .page(page) = stateValue.pageToFetch
-        else { return }
-        loadTransfers(page: page, currentList: stateValue.transfers)
+        guard stateValue.sections != .isLoading()
+        else { return Logger.info("Already loading transfers") }
+        loadTransfers()
     }
     private func refresh() {
+        guard stateValue.sections != .isLoading()
+        else { return Logger.info("Already loading transfers") }
         loadingTask?.cancel()
-        updateState(pageToFetch: .page(Constants.startPage), transfers: nil, favorites: nil)
-        loadTransfers(page: Constants.startPage, currentList: [])
+        updateState(pageToFetch: .page(Constants.startPage), transfers: [], favorites: [])
+        loadTransfers(refreshing: true)
     }
     private func getSections(
         for transfers: [DestinationResponse],
@@ -104,26 +106,34 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             InfoSection(items: transferInfoItems, layoutSection: .vertical)
         ])
     }
-    private func loadTransfers(
-        page: UInt,
-        currentList: [DestinationResponse]
-    ) {
+    private func loadTransfers(refreshing: Bool = false) {
+        Logger.info("refreshing: ", refreshing)
+        Logger.info("page: ", stateValue.pageToFetch)
+        guard case let .page(page) = stateValue.pageToFetch else { return }
         loadingTask?.cancel()
+
         let isFirstPage = page == Constants.startPage
+        let currentList: [DestinationResponse]
         if isFirstPage {
-            updateState(transfers: [], favorites: [], sections: .isLoading)
+            currentList = []
+            updateState(sections: .isLoading(refreshing: refreshing))
+        } else {
+            currentList = stateValue.transfers
         }
+        Logger.info("Current list count: ", currentList.count)
         loadingTask = Task { [weak self] in
             guard let self else { return }
             do {
                 let lists = try await api.list(page: page)
-                guard !Task.isCancelled else { return }
-                
+                guard !Task.isCancelled else { return Logger.info("Task cancelled") }
                 let nextPage: Page = lists.isEmpty ? .finished : .page(page + 1)
                 var updatedList = currentList
                 updatedList.append(contentsOf: lists)
                 let fetchedFavorites = updatedList.filter { [favorites] in favorites.contains($0.id) }
                 let sections = getSections(for: updatedList, withFavorites: fetchedFavorites)
+                Logger.info("Next page: ", nextPage)
+                Logger.info("Updated list count: ", updatedList.count)
+                Logger.info("Fetched favorites names: ", fetchedFavorites.map { $0.fullName })
                 updateState(
                     pageToFetch: nextPage,
                     transfers: updatedList,
@@ -131,8 +141,9 @@ final class TransferListViewModel: TransferListViewModelProtocol {
                     sections: sections
                 )
             } catch let error {
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { return Logger.info("Task cancelled") }
                 updateState(sections: .error(error.localizedDescription))
+                Logger.error("Error: ", error)
             }
         }
     }

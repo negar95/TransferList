@@ -8,12 +8,26 @@
 import UIKit
 import AppFoundation
 
+public enum CollectionViewLoading {
+    case loading
+    case refreshing
+    case none
+}
 final public class CollectionView: UIView {
 
+    enum Constants {
+        static let loadMoreThreshold: CGFloat = 100
+    }
     private lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
         return view
+    }()
+    private lazy var refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.addTarget(self, action: #selector(didRefresh), for: .valueChanged)
+        return control
     }()
     private lazy var emptyView: EmptyView = EmptyView()
     private lazy var loadingView: UIActivityIndicatorView = UIActivityIndicatorView(style: .large)
@@ -26,9 +40,11 @@ final public class CollectionView: UIView {
     public var showEmpty: Bool = false {
         didSet { updateEmptyView() }
     }
-    public var showLoading: Bool = false {
+    public var loading: CollectionViewLoading = .none {
         didSet { updateLoadingView() }
     }
+    public var onRefresh: (() -> Void)?
+    public var onLoadMore: (() -> Void)?
 
     public init() {
         super.init(frame: .zero)
@@ -41,6 +57,10 @@ final public class CollectionView: UIView {
     private func setupView() {
         addSubview(collectionView)
         collectionView.constraintToEdges(of: self)
+        collectionView.refreshControl = refreshControl
+    }
+    @objc private func didRefresh() {
+        onRefresh?()
     }
     private func updateViews() {
         updateCollectionView()
@@ -58,7 +78,20 @@ final public class CollectionView: UIView {
         collectionView.backgroundView = showEmpty ? emptyView : nil
     }
     private func updateLoadingView() {
-        collectionView.backgroundView = showLoading ? loadingView : nil
+        switch loading {
+        case .loading:
+            loadingView.startAnimating()
+            collectionView.backgroundView = loadingView
+            refreshControl.endRefreshing()
+        case .refreshing:
+            loadingView.stopAnimating()
+            collectionView.backgroundView = nil
+            refreshControl.beginRefreshing()
+        case .none:
+            loadingView.stopAnimating()
+            collectionView.backgroundView = nil
+            refreshControl.endRefreshing()
+        }
     }
     private func registerCells() {
         for section in sections {

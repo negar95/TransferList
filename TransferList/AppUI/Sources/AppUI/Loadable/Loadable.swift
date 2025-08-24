@@ -11,7 +11,7 @@ import Foundation
 public enum Loadable<T: Equatable>: Equatable {
     case error(String)
     case loaded(T)
-    case isLoading
+    case isLoading(refreshing: Bool = false)
     case notRequested
 
     public var value: T? {

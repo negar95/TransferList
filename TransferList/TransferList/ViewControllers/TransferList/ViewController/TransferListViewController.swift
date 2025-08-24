@@ -56,6 +56,12 @@ final class TransferListViewController: UIViewController {
     private func setupCollectionView() {
         view.addSubview(collectionView)
         collectionView.constraintToEdges(of: view)
+        collectionView.onRefresh = { [weak self] in
+            self?.viewModel.action(.refresh)
+        }
+        collectionView.onLoadMore = { [weak self] in
+            self?.viewModel.action(.getTransfers)
+        }
     }
 
     private func bind() {
@@ -73,10 +79,23 @@ final class TransferListViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] sections in
                 guard let self else { return }
-                collectionView.showLoading = sections == .isLoading
-                collectionView.showEmpty = sections.value?.isEmpty ?? false
-                if case let .loaded(sections) = sections {
-                    collectionView.sections = sections
+                switch sections {
+                case let .isLoading(refreshing):
+                    collectionView.showEmpty = false
+                    collectionView.loading = refreshing ? .refreshing : .loading
+                case let .loaded(items):
+                    collectionView.showEmpty = items.isEmpty
+                    collectionView.loading = .none
+                    collectionView.sections = items
+                case .notRequested:
+                    collectionView.showEmpty = false
+                    collectionView.loading = .none
+                    collectionView.sections = []
+                case let .error(error):
+                    collectionView.showEmpty = false
+                    collectionView.loading = .none
+                    collectionView.sections = []
+                    showToast(message: error)
                 }
             }.store(in: &cancellable)
     }
