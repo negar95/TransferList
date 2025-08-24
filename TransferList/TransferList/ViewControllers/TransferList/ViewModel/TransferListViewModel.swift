@@ -14,6 +14,14 @@ import AppFoundation
 final class TransferListViewModel: TransferListViewModelProtocol {
     private enum Constants {
         static let startPage: UInt = 1
+        static let favoriteHeader: TitleHeader = TitleHeader(
+            headerType: TitleHeaderView.self,
+            headerData: TitleHeaderData(stringId: "favorties", title: "Favorties")
+        )
+        static let allHeader: TitleHeader = TitleHeader(
+            headerType: TitleHeaderView.self,
+            headerData: TitleHeaderData(stringId: "all", title: "All")
+        )
     }
 
     @Injected(Dependencies.shared.destinationListApiFactory) private var api: DestinationListApiProtocol
@@ -78,6 +86,14 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         for transfers: [DestinationResponse],
         withFavorites favorites: [DestinationResponse]
     ) -> Loadable<[InfoSection]> {
+        let favoriteInfoItems = favorites.map { response in
+            let data = InfoItemData(response, type: .compact, onButtonTap:  { [weak self] in
+                guard let self else { return }
+                openDetail(for: response)
+            })
+            let item = InfoItem(cellType: InfoCollectionViewCell.self, cellData: data)
+            return item
+        }
         let transferInfoItems = transfers.map { response in
             let isFavorite = favorites.contains(response)
             let data = InfoItemData(
@@ -93,18 +109,24 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             let item = InfoItem(cellType: InfoCollectionViewCell.self, cellData: data)
             return item
         }
-        let favoriteInfoItems = favorites.map { response in
-            let data = InfoItemData(response, type: .compact, onButtonTap:  { [weak self] in
-                guard let self else { return }
-                openDetail(for: response)
-            })
-            let item = InfoItem(cellType: InfoCollectionViewCell.self, cellData: data)
-            return item
+        var sections: [InfoSection] = []
+        if !favoriteInfoItems.isEmpty {
+            sections.append(InfoSection(
+                sectionId: .favorites,
+                items: favoriteInfoItems,
+                layoutSection: .horizontal,
+                header: Constants.favoriteHeader
+            ))
         }
-        return .loaded([
-            InfoSection(items: favoriteInfoItems, layoutSection: .horizontal),
-            InfoSection(items: transferInfoItems, layoutSection: .vertical)
-        ])
+        if !transferInfoItems.isEmpty {
+            sections.append(InfoSection(
+                sectionId: .all,
+                items: transferInfoItems,
+                layoutSection: .vertical,
+                header: Constants.allHeader
+            ))
+        }
+        return .loaded(sections)
     }
     private func loadTransfers(refreshing: Bool = false) {
         Logger.info("refreshing: ", refreshing)
@@ -124,7 +146,7 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         loadingTask = Task { [weak self] in
             guard let self else { return }
             do {
-                let lists = try await api.list(page: page)
+                let lists: [DestinationResponse] = try await api.list(page: page)
                 guard !Task.isCancelled else { return Logger.info("Task cancelled") }
                 let nextPage: Page = lists.isEmpty ? .finished : .page(page + 1)
                 var updatedList = currentList

@@ -8,7 +8,7 @@
 import UIKit
 import SDWebImage
 
-final public class InfoCollectionViewCell: UICollectionViewCell, CollectionViewConfigurable {
+final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCell {
 
     private struct Constants {
         static let imageSize: CGFloat = 50

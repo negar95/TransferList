@@ -9,7 +9,7 @@ import UIKit
 
 final class EmptyView: UIView {
 
-    var title: String = "No Data" {
+    public var title: String = "No Data" {
         didSet {
             titleLabel.text = title
         }
@@ -21,7 +21,7 @@ final class EmptyView: UIView {
     }
 
     private struct Constants {
-        static let iconSize: CGFloat = 50
+        static let iconSize: CGFloat = 60
     }
     private lazy var stackView: UIStackView = {
         let view: UIStackView = UIStackView(arrangedSubviews: [
@@ -39,12 +39,14 @@ final class EmptyView: UIView {
         view.contentMode = .scaleAspectFit
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.iconSize)
+        view.tintColor = .gray
         return view
     }()
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
         view.font = .body
+        view.textColor = .gray
         return view
     }()
     init() {
@@ -57,6 +59,9 @@ final class EmptyView: UIView {
 
     private func setupView() {
         addSubview(stackView)
-        stackView.constraintToEdges(of: self)
+        stackView.constraintToCenter(of: self)
+
+        titleLabel.text = title
+        icon.image = UIImage(systemName: iconName)
     }
 }

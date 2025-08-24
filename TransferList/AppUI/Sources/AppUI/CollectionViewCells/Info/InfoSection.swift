@@ -7,13 +7,27 @@
 
 import UIKit
 
+public enum InfoSectionId: String {
+    case favorites
+    case all
+}
+
 public struct InfoSection: CollectionViewSection, Equatable {
+    public let sectionId: String
     public let items: [InfoItem]
     public let layoutSection: NSCollectionLayoutSection
+    public let header: TitleHeader
 
-    public init(items: [InfoItem], layoutSection: NSCollectionLayoutSection) {
+    public init(
+        sectionId: InfoSectionId,
+        items: [InfoItem],
+        layoutSection: NSCollectionLayoutSection,
+        header: TitleHeader
+    ) {
+        self.sectionId = sectionId.rawValue
         self.items = items
         self.layoutSection = layoutSection
+        self.header = header
     }
 }
 public struct InfoItem: CollectionViewItem, Equatable {
@@ -63,4 +77,3 @@ public struct InfoItemData: IdentifiableItemData, Equatable {
         lhs.type == rhs.type
     }
 }
-
