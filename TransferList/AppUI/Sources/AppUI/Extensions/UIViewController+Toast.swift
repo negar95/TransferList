@@ -27,7 +27,7 @@ extension UIViewController {
         toastLabel.text = message
         toastLabel.textColor = color
         toastLabel.textAlignment = .center
-        toastLabel.font = .body
+        toastLabel.font = .title3
         toastLabel.numberOfLines = 0
         toastLabel.backgroundColor = .white.withAlphaComponent(0.7)
         toastLabel.alpha = 1.0

@@ -27,7 +27,6 @@ final class EmptyView: UIView {
         let view: UIStackView = UIStackView(arrangedSubviews: [
             icon, titleLabel
         ])
-        view.distribution = .fill
         view.alignment = .center
         view.axis = .vertical
         view.spacing = 10
@@ -45,7 +44,7 @@ final class EmptyView: UIView {
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .body
+        view.font = .title3
         view.textColor = .gray
         return view
     }()

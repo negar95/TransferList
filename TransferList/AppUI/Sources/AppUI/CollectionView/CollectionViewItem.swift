@@ -11,24 +11,28 @@ public protocol CollectionViewSection {
     associatedtype ItemType: CollectionViewItem
     associatedtype HeaderType: CollectionViewHeader
     var items: [ItemType] { get }
-    var header: HeaderType { get }
+    var header: HeaderType? { get }
     var layoutSection: NSCollectionLayoutSection { get }
     var sectionId: String { get }
 }
 public protocol CollectionViewHeader: Equatable {
     associatedtype HeaderType: UICollectionReusableView
-    associatedtype DataType: IdentifiableItemData
+    associatedtype DataType: IdentifiableTappableItem
     var headerType: HeaderType.Type { get }
     var headerData: DataType { get }
 }
 public protocol CollectionViewItem {
     associatedtype CellType: UICollectionViewCell
-    associatedtype DataType: IdentifiableItemData
+    associatedtype DataType: IdentifiableTappableItem
     var cellType: CellType.Type { get }
     var cellData: DataType { get }
 }
-public protocol IdentifiableItemData {
+public protocol IdentifiableTappableItem {
     var stringId: String { get }
+    var onTap: (() -> Void)? { get }
+}
+extension IdentifiableTappableItem {
+    public var onTap: (() -> Void)? { nil }
 }
 public protocol ConfigurableCell: UICollectionViewCell {
     func updateViews(with item: any CollectionViewItem)

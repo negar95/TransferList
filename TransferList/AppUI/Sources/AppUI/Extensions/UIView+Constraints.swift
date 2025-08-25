@@ -28,4 +28,9 @@ extension UIView {
             heightAnchor.constraint(equalToConstant: edgeSize)
         ])
     }
+    func constraintSquare() {
+        NSLayoutConstraint.activate([
+            widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1)
+        ])
+    }
 }

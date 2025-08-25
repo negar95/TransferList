@@ -15,4 +15,10 @@ extension CollectionView: UICollectionViewDelegate {
         guard scrollPosition > contentHeight - Constants.loadMoreThreshold else { return }
         onLoadMore?()
     }
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let section = sections[safe: indexPath.section],
+              let item = section.items[safe: indexPath.item]
+        else { return }
+        item.cellData.onTap?()
+    }
 }

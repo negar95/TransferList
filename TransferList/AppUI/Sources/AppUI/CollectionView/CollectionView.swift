@@ -95,17 +95,23 @@ final public class CollectionView: UIView {
         }
     }
     private func registerCells() {
+        if !registeredReusables.contains(UICollectionViewCell.reuseIdentifier) {
+            collectionView.registerHeader(UICollectionViewCell.self)
+            registeredReusables.insert(UICollectionViewCell.reuseIdentifier)
+        }
         for section in sections {
-            let identifier = section.header.headerType.reuseIdentifier
-            if !registeredReusables.contains(identifier) {
-                collectionView.registerHeader(section.header.headerType)
-                registeredReusables.insert(identifier)
+            if let header = section.header {
+                let headerIdentifier = header.headerType.reuseIdentifier
+                if !registeredReusables.contains(headerIdentifier) {
+                    collectionView.registerHeader(header.headerType)
+                    registeredReusables.insert(headerIdentifier)
+                }
             }
             for item in section.items {
-                let identifier = item.cellType.reuseIdentifier
-                if !registeredReusables.contains(identifier) {
+                let itemIdentifier = item.cellType.reuseIdentifier
+                if !registeredReusables.contains(itemIdentifier) {
                     collectionView.registerCell(item.cellType)
-                    registeredReusables.insert(identifier)
+                    registeredReusables.insert(itemIdentifier)
                 }
             }
         }

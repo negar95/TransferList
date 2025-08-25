@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import AppUI
+import AppFoundation
 
 final class TransferListViewController: UIViewController {
 
@@ -45,10 +46,7 @@ final class TransferListViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         bind()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.action(.getTransfers)
+        viewModel.action(.reload(refreshing: false))
     }
     private func setupView() {
         setupCollectionView()
@@ -57,7 +55,7 @@ final class TransferListViewController: UIViewController {
         view.addSubview(collectionView)
         collectionView.constraintToEdges(of: view)
         collectionView.onRefresh = { [weak self] in
-            self?.viewModel.action(.refresh)
+            self?.viewModel.action(.reload(refreshing: true))
         }
         collectionView.onLoadMore = { [weak self] in
             self?.viewModel.action(.getTransfers)
@@ -101,8 +99,12 @@ final class TransferListViewController: UIViewController {
     }
     private func handleDestination(_ destination: TransferListDestination) {
         switch destination {
-        case .openDetail(_):
-            break
+        case let .openDetail(detailSection):
+            openDetail(for: detailSection)
         }
+    }
+    private func openDetail(for configuration: TransferModule.Configuration) {
+        let viewController = TransferModule.build(configuration: configuration)
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

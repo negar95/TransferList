@@ -18,7 +18,7 @@ public struct TitleHeader: CollectionViewHeader, Equatable {
         lhs.headerData == rhs.headerData
     }
 }
-public struct TitleHeaderData: IdentifiableItemData, Equatable {
+public struct TitleHeaderData: IdentifiableTappableItem, Equatable {
     public let stringId: String
     public let title: String
 

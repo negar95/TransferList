@@ -16,13 +16,13 @@ public struct InfoSection: CollectionViewSection, Equatable {
     public let sectionId: String
     public let items: [InfoItem]
     public let layoutSection: NSCollectionLayoutSection
-    public let header: TitleHeader
+    public let header: TitleHeader?
 
     public init(
         sectionId: InfoSectionId,
         items: [InfoItem],
         layoutSection: NSCollectionLayoutSection,
-        header: TitleHeader
+        header: TitleHeader? = nil
     ) {
         self.sectionId = sectionId.rawValue
         self.items = items
@@ -43,7 +43,7 @@ public struct InfoItem: CollectionViewItem, Equatable {
         lhs.cellData == rhs.cellData
     }
 }
-public struct InfoItemData: IdentifiableItemData, Equatable {
+public struct InfoItemData: IdentifiableTappableItem, Equatable {
     public let stringId: String
     public let title: String
     public let subtitle: String?

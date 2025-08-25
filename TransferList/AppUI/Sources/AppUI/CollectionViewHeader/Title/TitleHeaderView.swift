@@ -11,7 +11,7 @@ public final class TitleHeaderView: UICollectionReusableView, ConfigurableHeader
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .headline
+        view.font = .largeTitle
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
