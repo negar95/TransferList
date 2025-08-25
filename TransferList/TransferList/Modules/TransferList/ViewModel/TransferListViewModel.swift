@@ -52,7 +52,7 @@ final class TransferListViewModel: TransferListViewModelProtocol {
 
     deinit {
         loadingTask?.cancel()
-        Logger.info("🗑️ TransferListViewModel deinitialized")
+        Logger.info("TransferListViewModel deinitialized")
     }
 
     // MARK: - Subscription Management
