@@ -32,7 +32,7 @@ final class TransferViewModel: TransferViewModelProtocol {
         subscribeToFavorites()
     }
     deinit {
-        Logger.info("🗑️ TransferViewModel deinitialized")
+        Logger.info("TransferViewModel deinitialized")
     }
 
     // MARK: - Subscription Management

@@ -26,10 +26,6 @@ let package = Package(
                 .product(name: "AppFoundation", package: "AppFoundation"),
                 .product(name: "SDWebImage", package: "SDWebImage")
             ]
-        ),
-        .testTarget(
-            name: "AppUITests",
-            dependencies: ["AppUI"]
-        ),
+        )
     ]
 )

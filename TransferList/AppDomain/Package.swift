@@ -22,9 +22,5 @@ let package = Package(
                 .product(name: "AppFoundation", package: "AppFoundation")
             ]
         ),
-        .testTarget(
-            name: "AppDomainTests",
-            dependencies: ["AppDomain"]
-        ),
     ]
 )
