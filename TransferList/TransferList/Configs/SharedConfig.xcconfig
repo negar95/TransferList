@@ -1,0 +1,11 @@
+//
+//  SharedConfig.xcconfig
+//  TransferList
+//
+//  Created by Negar Moshtaghi on 8/23/25.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+API_HOST = 04571d99-5e5a-4aba-aa6f-d67bde3c2b86.mock.pstmn.io
