@@ -53,6 +53,7 @@ final class TransferViewController: UIViewController {
 
     // MARK: - Setup
     private func setupView() {
+        navigationController?.navigationBar.tintColor = .primary
         setupCollectionView()
     }
 

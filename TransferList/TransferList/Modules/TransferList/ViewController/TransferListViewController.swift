@@ -12,9 +12,14 @@ import AppFoundation
 
 final class TransferListViewController: UIViewController {
 
+    // MARK: - Constants
+    
     enum Constants {
         static let contentInset: UIEdgeInsets = UIEdgeInsets(top: 40, left: 0, bottom: 123, right: 0)
     }
+    
+    // MARK: - Properties
+    
     lazy private var collectionView: CollectionView = {
         let view = CollectionView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -28,6 +33,8 @@ final class TransferListViewController: UIViewController {
         viewModel.state.value
     }
 
+    // MARK: - Init
+    
     init(
         viewModel: TransferListViewModelProtocol,
         cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
@@ -42,15 +49,20 @@ final class TransferListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         bind()
         viewModel.action(.reload(refreshing: false))
     }
+    // MARK: - Setup
+    
     private func setupView() {
         setupCollectionView()
     }
+    
     private func setupCollectionView() {
         view.addSubview(collectionView)
         collectionView.constraintToEdges(of: view)
@@ -62,6 +74,8 @@ final class TransferListViewController: UIViewController {
         }
     }
 
+    // MARK: - Binding
+    
     private func bind() {
         viewModel.state
             .map(\.destination)
@@ -97,12 +111,15 @@ final class TransferListViewController: UIViewController {
                 }
             }.store(in: &cancellable)
     }
+    // MARK: - Navigation
+    
     private func handleDestination(_ destination: TransferListDestination) {
         switch destination {
         case let .openDetail(detailSection):
             openDetail(for: detailSection)
         }
     }
+    
     private func openDetail(for configuration: TransferModule.Configuration) {
         let viewController = TransferModule.build(configuration: configuration)
         navigationController?.pushViewController(viewController, animated: true)
