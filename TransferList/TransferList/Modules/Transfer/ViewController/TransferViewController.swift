@@ -11,9 +11,12 @@ import AppUI
 
 final class TransferViewController: UIViewController {
 
+    // MARK: - Constants
     enum Constants {
         static let contentInset: UIEdgeInsets = UIEdgeInsets(top: 40, left: 0, bottom: 123, right: 0)
     }
+
+    // MARK: - Properties
     lazy private var collectionView: CollectionView = {
         let view = CollectionView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -21,12 +24,12 @@ final class TransferViewController: UIViewController {
     }()
 
     let viewModel: TransferViewModelProtocol
-    private var cancellable: Set<AnyCancellable>
-
     private var viewModelState: TransferViewModelState {
         viewModel.state.value
     }
+    private var cancellable: Set<AnyCancellable>
 
+    // MARK: - Init
     init(
         viewModel: TransferViewModelProtocol,
         cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
@@ -41,19 +44,24 @@ final class TransferViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         bind()
     }
+
+    // MARK: - Setup
     private func setupView() {
         setupCollectionView()
     }
+
     private func setupCollectionView() {
         view.addSubview(collectionView)
         collectionView.constraintToEdges(of: view)
     }
 
+    // MARK: - Binding
     private func bind() {
         viewModel.state
             .compactMap(\.detailSection)

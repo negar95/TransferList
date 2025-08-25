@@ -13,14 +13,15 @@ import AppFoundation
 
 final class TransferViewModel: TransferViewModelProtocol {
 
+    // MARK: - Properties
     @UserDefault(\.favorites) private var favorites: [String]
     var state: CurrentValueSubject<TransferViewModelState, Never>
     var stateValue: TransferViewModelState {
         state.value
     }
-
     private var cancellables = Set<AnyCancellable>()
 
+    // MARK: - Init/Deinit
     init(response: DestinationResponse, isFavorite: Bool) {
         state = CurrentValueSubject<TransferViewModelState, Never>(
             TransferViewModelState(
@@ -33,6 +34,8 @@ final class TransferViewModel: TransferViewModelProtocol {
     deinit {
         Logger.info("🗑️ TransferViewModel deinitialized")
     }
+
+    // MARK: - Subscription Management
     private func subscribeToFavorites() {
         $favorites
             .sink { [weak self] favorites in
@@ -41,12 +44,8 @@ final class TransferViewModel: TransferViewModelProtocol {
             }
             .store(in: &cancellables)
     }
-    private func updateFavorites(with favorites: [String]) {
-        let currentResponse = stateValue.response
-        let isFavorite = favorites.contains(currentResponse.id)
-        updateState(isFavorite: isFavorite)
-    }
 
+    // MARK: - Public Methods
     func action(_ action: TransferViewModelAction) {
         switch action {
         case let .addFavorite(id):
@@ -55,6 +54,13 @@ final class TransferViewModel: TransferViewModelProtocol {
             removeFromFavorites(id)
         }
     }
+    // MARK: - Private Methods
+    private func updateFavorites(with favorites: [String]) {
+        let currentResponse = stateValue.response
+        let isFavorite = favorites.contains(currentResponse.id)
+        updateState(isFavorite: isFavorite)
+    }
+    
     private func updateState(isFavorite: Bool) {
         let response = stateValue.response
         let section = DetailSection(response: response, isFavorite: isFavorite) { [weak self] in
