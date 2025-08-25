@@ -70,7 +70,7 @@ final public class DetailCollectionViewCell: UICollectionViewCell, ConfigurableC
     }()
     private lazy var button: UIButton = {
         let view = UIButton(type: .custom)
-        view.tintColor = .orange
+        view.tintColor = .primary
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.buttonSize)
         view.addTarget(self, action: #selector(didTapOnButton), for: .touchUpInside)

@@ -38,14 +38,14 @@ final class EmptyView: UIView {
         view.contentMode = .scaleAspectFit
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.iconSize)
-        view.tintColor = .gray
+        view.tintColor = .secondary
         return view
     }()
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
         view.font = .title3
-        view.textColor = .gray
+        view.textColor = .secondary
         return view
     }()
     init() {

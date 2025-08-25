@@ -67,7 +67,7 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
     }()
     private lazy var button: UIButton = {
         let view = UIButton(type: .custom)
-        view.tintColor = .orange
+        view.tintColor = .primary
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.buttonSize)
         view.addTarget(self, action: #selector(didTapOnButton), for: .touchUpInside)
@@ -75,7 +75,7 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
     }()
     private lazy var icon: UIImageView = {
         let view = UIImageView()
-        view.tintColor = .gray
+        view.tintColor = .secondary
         view.contentMode = .scaleAspectFit
         view.translatesAutoresizingMaskIntoConstraints = false
         view.constraintSquare(to: Constants.iconSize)
