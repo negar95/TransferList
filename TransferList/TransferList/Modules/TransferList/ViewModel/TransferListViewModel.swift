@@ -12,6 +12,8 @@ import AppUI
 import AppFoundation
 
 final class TransferListViewModel: TransferListViewModelProtocol {
+    
+    // MARK: - Constants
     private enum Constants {
         static let startPage: UInt = 1
         static let favoriteHeader: TitleHeader = TitleHeader(
@@ -24,6 +26,7 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         )
     }
 
+    // MARK: - Properties
     @Injected(Dependencies.shared.destinationListApiFactory) private var api: DestinationListApiProtocol
     @UserDefault(\.favorites) private var favorites: [String]
 
@@ -33,6 +36,7 @@ final class TransferListViewModel: TransferListViewModelProtocol {
 
     private var stateValue: TransferListViewModelState { state.value }
 
+    // MARK: - Init/Deinit
     init() {
         state = CurrentValueSubject<TransferListViewModelState, Never>(
             TransferListViewModelState(
@@ -45,11 +49,13 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         )
         subscribeToFavorites()
     }
+
     deinit {
         loadingTask?.cancel()
         Logger.info("🗑️ TransferListViewModel deinitialized")
     }
 
+    // MARK: - Subscription Management
     private func subscribeToFavorites() {
         $favorites
             .sink { [weak self] favorites in
@@ -58,6 +64,8 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             }
             .store(in: &cancellables)
     }
+
+    // MARK: - Public Methods
     func action(_ action: TransferListViewModelAction) {
         switch action {
         case .getTransfers:
@@ -66,6 +74,8 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             reload(refreshing: refreshing)
         }
     }
+
+    // MARK: - State Management
     private func updateState(
         pageToFetch: Page? = nil,
         transfers: [DestinationResponse]? = nil,
@@ -81,11 +91,14 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             destination: destination
         )
     }
+
+    // MARK: - Data Loading
     private func getTransfers() {
         guard stateValue.sections != .isLoading()
         else { return Logger.info("Already loading transfers") }
         loadTransfers()
     }
+    
     private func reload(refreshing: Bool) {
         guard stateValue.sections != .isLoading()
         else { return Logger.info("Already loading transfers") }
@@ -93,6 +106,8 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         updateState(pageToFetch: .page(Constants.startPage), transfers: [], favorites: [])
         loadTransfers(refreshing: refreshing)
     }
+
+    // MARK: - Section Building
     private func getSections(
         for transfers: [DestinationResponse],
         withFavorites favorites: [DestinationResponse]
@@ -180,9 +195,13 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             }
         }
     }
+
+    // MARK: - Private Methods
     private func updateFavorites(with favorites: [String]) {
         let transfers = stateValue.transfers
-        guard !transfers.isEmpty else { return }
+        guard !transfers.isEmpty else {
+            return Logger.error("can't updateFavorites with empty transfers")
+        }
         let updatedFavorites = transfers.filter { favorites.contains($0.id) }
         let sections = getSections(for: stateValue.transfers, withFavorites: updatedFavorites)
         updateState(
@@ -190,15 +209,18 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             sections: sections
         )
     }
+
     private func openDetail(for response: DestinationResponse) {
         let isFavorite = favorites.contains(response.id)
         let configuration = TransferModule.Configuration(response: response, isFavorite: isFavorite)
         updateState(destination: .openDetail(configuration))
         updateState()
     }
+
     private func addToFavorites(_ id: String) {
         favorites.append(id)
     }
+
     private func removeFromFavorites(_ id: String) {
         favorites.removeAll { $0 == id }
     }

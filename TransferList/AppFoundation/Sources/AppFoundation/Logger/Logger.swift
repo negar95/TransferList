@@ -27,7 +27,7 @@ public struct Logger {
     ) {
         #if DEBUG
         let fileName = URL(fileURLWithPath: file).lastPathComponent
-        print("🔴 [\(fileName):\(line)] \(function) - ERROR: ", message)
+        print("[\(fileName):\(line)] \(function) - ERROR: ", message)
         #endif
     }
     public static func warning(
@@ -38,7 +38,7 @@ public struct Logger {
     ) {
         #if DEBUG
         let fileName = URL(fileURLWithPath: file).lastPathComponent
-        print("⚠️ [\(fileName):\(line)] \(function) - WARNING: ", message)
+        print("[\(fileName):\(line)] \(function) - WARNING: ", message)
         #endif
     }
 }
