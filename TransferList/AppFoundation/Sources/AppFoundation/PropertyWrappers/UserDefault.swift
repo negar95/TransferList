@@ -6,37 +6,28 @@
 //
 
 import Foundation
+import Combine
 
 @propertyWrapper
-public struct UserDefault<Value: Codable> {
-    let key: String
-    let defaultValue: Value
-    let storage: UserDefaults
+public struct UserDefault<Value: Equatable & Codable> {
+    private let keyPath: ReferenceWritableKeyPath<UserDefaults, Value>
+    private let storage: UserDefaults
 
     public init(
-        _ key: String,
-        default defaultValue: Value,
+        _ keyPath: ReferenceWritableKeyPath<UserDefaults, Value>,
         storage: UserDefaults = .standard
     ) {
-        self.key = key
-        self.defaultValue = defaultValue
+        self.keyPath = keyPath
         self.storage = storage
     }
     public var wrappedValue: Value {
-        get {
-            if let data = storage.data(forKey: key) {
-                if let value = try? JSONDecoder().decode(Value.self, from: data) {
-                    return value
-                }
-            }
-            return defaultValue
-        }
-        set {
-            if let data = try? JSONEncoder().encode(newValue) {
-                storage.set(data, forKey: key)
-            } else {
-                storage.removeObject(forKey: key)
-            }
-        }
+        get { storage[keyPath: keyPath] }
+        set { storage[keyPath: keyPath] = newValue }
+    }
+    public var projectedValue: AnyPublisher<Value, Never> {
+        storage
+            .publisher(for: keyPath)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 }

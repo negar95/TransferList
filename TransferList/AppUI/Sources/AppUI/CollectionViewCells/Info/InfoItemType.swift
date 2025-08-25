@@ -9,7 +9,7 @@ import UIKit
 
 public enum InfoItemType: Equatable, Hashable {
     case compact
-    case detailed(isFavorite: Bool)
+    case detailed(UIImage?)
 }
 
 extension InfoItemType {
@@ -23,13 +23,13 @@ extension InfoItemType {
                 buttonImage: nil,
                 iconImage: nil,
             )
-        case let .detailed(isFavorite):
+        case let .detailed(buttonImage):
             return .init(
                 direction: .horizontal,
                 spacing: 8,
                 textAlignment: .left,
-                buttonImage: isFavorite ? UIImage(systemName: "star.fill") : UIImage(systemName: "star"),
-                iconImage: UIImage(systemName: "chevron.right")
+                buttonImage: buttonImage,
+                iconImage: .rightChevron
             )
         }
     }

@@ -25,10 +25,11 @@ final class TransferListViewModel: TransferListViewModelProtocol {
     }
 
     @Injected(Dependencies.shared.destinationListApiFactory) private var api: DestinationListApiProtocol
-    @UserDefault(UserDefaultKeys.favorites.rawValue, default: []) private var favorites: [String]
+    @UserDefault(\.favorites) private var favorites: [String]
 
     var state: CurrentValueSubject<TransferListViewModelState, Never>
     private var loadingTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     private var stateValue: TransferListViewModelState { state.value }
 
@@ -42,17 +43,27 @@ final class TransferListViewModel: TransferListViewModelProtocol {
                 destination: nil
             )
         )
+        subscribeToFavorites()
     }
     deinit {
         loadingTask?.cancel()
+        Logger.info("🗑️ TransferListViewModel deinitialized")
     }
 
+    private func subscribeToFavorites() {
+        $favorites
+            .sink { [weak self] favorites in
+                guard let self else { return }
+                self.updateFavorites(with: favorites)
+            }
+            .store(in: &cancellables)
+    }
     func action(_ action: TransferListViewModelAction) {
         switch action {
         case .getTransfers:
             getTransfers()
-        case .refresh:
-            refresh()
+        case let .reload(refreshing):
+            reload(refreshing: refreshing)
         }
     }
     private func updateState(
@@ -75,12 +86,12 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         else { return Logger.info("Already loading transfers") }
         loadTransfers()
     }
-    private func refresh() {
+    private func reload(refreshing: Bool) {
         guard stateValue.sections != .isLoading()
         else { return Logger.info("Already loading transfers") }
         loadingTask?.cancel()
         updateState(pageToFetch: .page(Constants.startPage), transfers: [], favorites: [])
-        loadTransfers(refreshing: true)
+        loadTransfers(refreshing: refreshing)
     }
     private func getSections(
         for transfers: [DestinationResponse],
@@ -98,7 +109,7 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             let isFavorite = favorites.contains(response)
             let data = InfoItemData(
                 response,
-                type: .detailed(isFavorite: isFavorite)
+                type: .detailed(isFavorite ? .filledStar : .star)
             ) { [weak self] in
                 guard let self else { return }
                 openDetail(for: response)
@@ -155,7 +166,7 @@ final class TransferListViewModel: TransferListViewModelProtocol {
                 let sections = getSections(for: updatedList, withFavorites: fetchedFavorites)
                 Logger.info("Next page: ", nextPage)
                 Logger.info("Updated list count: ", updatedList.count)
-                Logger.info("Fetched favorites names: ", fetchedFavorites.map { $0.fullName })
+                Logger.info("Fetched favorites ids: ", fetchedFavorites.map { $0.id })
                 updateState(
                     pageToFetch: nextPage,
                     transfers: updatedList,
@@ -169,8 +180,9 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             }
         }
     }
-    private func updateFavorites() {
+    private func updateFavorites(with favorites: [String]) {
         let transfers = stateValue.transfers
+        guard !transfers.isEmpty else { return }
         let updatedFavorites = transfers.filter { favorites.contains($0.id) }
         let sections = getSections(for: stateValue.transfers, withFavorites: updatedFavorites)
         updateState(
@@ -178,16 +190,17 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             sections: sections
         )
     }
-    private func openDetail(for destination: DestinationResponse) {
-        updateState(destination: .openDetail(destination))
+    private func openDetail(for response: DestinationResponse) {
+        let isFavorite = favorites.contains(response.id)
+        let configuration = TransferModule.Configuration(response: response, isFavorite: isFavorite)
+        updateState(destination: .openDetail(configuration))
+        updateState()
     }
     private func addToFavorites(_ id: String) {
         favorites.append(id)
-        updateFavorites()
     }
     private func removeFromFavorites(_ id: String) {
         favorites.removeAll { $0 == id }
-        updateFavorites()
     }
 }
 
@@ -200,9 +213,9 @@ fileprivate extension InfoItemData {
     ) {
         self.init(
             stringId: destination.id + type.hashValue.description,
-            title: destination.fullName,
-            subtitle: destination.email,
-            image: destination.image,
+            title: destination.person.fullName,
+            subtitle: destination.person.email,
+            image: destination.person.avatar,
             type: type,
             onTap: onTap,
             onButtonTap: onButtonTap

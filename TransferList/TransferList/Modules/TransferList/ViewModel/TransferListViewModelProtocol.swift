@@ -16,10 +16,10 @@ protocol TransferListViewModelProtocol {
 }
 enum TransferListViewModelAction {
     case getTransfers
-    case refresh
+    case reload(refreshing: Bool)
 }
 enum TransferListDestination: Equatable {
-    case openDetail(DestinationResponse)
+    case openDetail(TransferModule.Configuration)
 }
 
 struct TransferListViewModelState {

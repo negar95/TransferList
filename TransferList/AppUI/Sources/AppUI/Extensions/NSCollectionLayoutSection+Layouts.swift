@@ -37,7 +37,7 @@ extension NSCollectionLayoutSection {
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(100))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 16
+        section.interGroupSpacing = 32
         section.contentInsets = .init(24)
 
         let headerSize = NSCollectionLayoutSize(
@@ -51,6 +51,16 @@ extension NSCollectionLayoutSection {
         )
         section.boundarySupplementaryItems = [header]
 
+        return section
+    }()
+    public static var wholeContent: NSCollectionLayoutSection = {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 0
+        section.contentInsets = .zero
         return section
     }()
 }

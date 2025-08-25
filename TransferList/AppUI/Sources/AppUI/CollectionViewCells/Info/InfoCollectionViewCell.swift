@@ -21,7 +21,6 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
         let textAlignment: NSTextAlignment
         let buttonImage: UIImage?
         let iconImage: UIImage?
-
     }
 
     private var onButtonTap: (() -> Void)?
@@ -31,7 +30,6 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
         let view: UIStackView = UIStackView(arrangedSubviews: [
             imageView, infoStackView, button, icon
         ])
-        view.distribution = .fill
         view.alignment = .center
         view.axis = .vertical
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -51,8 +49,6 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
             titleLabel,
             subtitleLabel
         ])
-        view.distribution = .fill
-        view.alignment = .fill
         view.axis = .vertical
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -60,13 +56,13 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
     private lazy var titleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .body
+        view.font = .title3
         return view
     }()
     private lazy var subtitleLabel: UILabel = {
         let view = UILabel()
         view.textAlignment = .left
-        view.font = .description
+        view.font = .headline
         return view
     }()
     private lazy var button: UIButton = {
@@ -110,13 +106,9 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
         super.init(coder: coder)
         setupViews()
     }
-
-    private func setupConstraints() {
-        stackView.constraintToEdges(of: contentView)
-    }
     private func setupViews() {
         contentView.addSubview(stackView)
-        setupConstraints()
+        stackView.constraintToEdges(of: contentView)
     }
     private func configureViews(with config: Configuration) {
         stackView.axis = config.direction
