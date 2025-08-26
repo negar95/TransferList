@@ -32,8 +32,8 @@ public final class TitleHeaderView: UICollectionReusableView, ConfigurableHeader
         addSubview(titleLabel)
         titleLabel.constraintToEdges(of: self)
     }
-    public func updateViews(with header: any CollectionViewHeader) {
-        guard let data = header.headerData as? TitleHeaderData else { return }
+    public func updateViews(with headerItem: any IdentifiableItem) {
+        guard let data = headerItem as? TitleHeaderData else { return }
         titleLabel.text = data.title
     }
 }

@@ -9,5 +9,5 @@
 import UIKit
 
 public final class EmptyHeaderView: UICollectionReusableView, ConfigurableHeader {
-    public func updateViews(with header: any CollectionViewHeader) { }
+    public func updateViews(with header: any IdentifiableItem) { }
 }

@@ -16,27 +16,27 @@ public protocol CollectionViewSection {
     var sectionId: String { get }
 }
 public protocol CollectionViewHeader: Equatable {
-    associatedtype HeaderType: UICollectionReusableView
-    associatedtype DataType: IdentifiableTappableItem
+    associatedtype HeaderType: ConfigurableHeader
+    associatedtype DataType: IdentifiableItem
     var headerType: HeaderType.Type { get }
     var headerData: DataType { get }
 }
 public protocol CollectionViewItem {
-    associatedtype CellType: UICollectionViewCell
-    associatedtype DataType: IdentifiableTappableItem
+    associatedtype CellType: ConfigurableCell
+    associatedtype DataType: IdentifiableItem
     var cellType: CellType.Type { get }
     var cellData: DataType { get }
 }
-public protocol IdentifiableTappableItem {
+public protocol IdentifiableItem {
     var stringId: String { get }
     var onTap: (() -> Void)? { get }
 }
-extension IdentifiableTappableItem {
+extension IdentifiableItem {
     public var onTap: (() -> Void)? { nil }
 }
 public protocol ConfigurableCell: UICollectionViewCell {
-    func updateViews(with item: any CollectionViewItem)
+    func updateViews(with item: any IdentifiableItem)
 }
 public protocol ConfigurableHeader: UICollectionReusableView {
-    func updateViews(with header: any CollectionViewHeader)
+    func updateViews(with header: any IdentifiableItem)
 }

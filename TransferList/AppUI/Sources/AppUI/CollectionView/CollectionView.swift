@@ -69,7 +69,6 @@ final public class CollectionView: UIView {
     }
     private func updateCollectionView() {
         Logger.info("Sections count: \(sections.count)")
-        guard !sections.isEmpty else { return }
         registerCells()
         setupLayout()
         setupDataSource()
@@ -96,8 +95,12 @@ final public class CollectionView: UIView {
     }
     private func registerCells() {
         if !registeredReusables.contains(UICollectionViewCell.reuseIdentifier) {
-            collectionView.registerHeader(UICollectionViewCell.self)
+            collectionView.registerCell(UICollectionViewCell.self)
             registeredReusables.insert(UICollectionViewCell.reuseIdentifier)
+        }
+        if !registeredReusables.contains(EmptyHeaderView.reuseIdentifier) {
+            collectionView.registerHeader(EmptyHeaderView.self)
+            registeredReusables.insert(EmptyHeaderView.reuseIdentifier)
         }
         for section in sections {
             if let header = section.header {
@@ -131,7 +134,10 @@ final public class CollectionView: UIView {
                   let item = section.items[safe: indexPath.item]
             else {
                 Logger.error("Can't get item for indexPath:", indexPath)
-                return UICollectionViewCell()
+                return collectionView.dequeueReusableCell(
+                    withReuseIdentifier: UICollectionViewCell.reuseIdentifier,
+                    for: indexPath
+                )
             }
             Logger.info("Item for indexPath: \(indexPath) is: \(item.cellData)")
             let reuseIdentifier = item.cellType.reuseIdentifier
@@ -141,9 +147,12 @@ final public class CollectionView: UIView {
             ) as? ConfigurableCell
             else {
                 Logger.error("Can't get ConfigurableCell")
-                return UICollectionViewCell()
+                return collectionView.dequeueReusableCell(
+                    withReuseIdentifier: UICollectionViewCell.reuseIdentifier,
+                    for: indexPath
+                )
             }
-            cell.updateViews(with: item)
+            cell.updateViews(with: item.cellData)
             Logger.info("ConfigurableCell is updated")
             return cell
         }
@@ -151,12 +160,20 @@ final public class CollectionView: UIView {
             guard kind == UICollectionView.elementKindSectionHeader
             else {
                 Logger.warning("Unsupported kind: \(kind)")
-                return nil
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: EmptyHeaderView.reuseIdentifier,
+                    for: indexPath
+                )
             }
             guard let sectionHeader = self?.sections[safe: indexPath.section]?.header
             else {
                 Logger.error("Can't get header for indexPath:", indexPath)
-                return nil
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: EmptyHeaderView.reuseIdentifier,
+                    for: indexPath
+                )
             }
             Logger.info("Header for indexPath: \(indexPath) is: \(sectionHeader)")
             let reuseIdentifier = sectionHeader.headerType.reuseIdentifier
@@ -166,9 +183,13 @@ final public class CollectionView: UIView {
                 for: indexPath
             ) as? ConfigurableHeader else {
                 Logger.error("Can't get ConfigurableHeader")
-                return nil
+                return collectionView.dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: EmptyHeaderView.reuseIdentifier,
+                    for: indexPath
+                )
             }
-            header.updateViews(with: sectionHeader)
+            header.updateViews(with: sectionHeader.headerData)
             Logger.info("ConfigurableHeader is updated")
             return header
         }
