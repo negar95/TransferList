@@ -8,10 +8,11 @@
 import UIKit
 
 public struct EmptyHeader: CollectionViewHeader, Equatable {
-    public var headerType: UICollectionReusableView.Type
+
+    public var headerType: EmptyHeaderView.Type
     public var headerData: EmptyHeaderData
 
-    public init(headerType: UICollectionReusableView.Type, headerData: EmptyHeaderData) {
+    public init(headerType: EmptyHeaderView.Type, headerData: EmptyHeaderData) {
         self.headerType = headerType
         self.headerData = headerData
     }
@@ -20,6 +21,6 @@ public struct EmptyHeader: CollectionViewHeader, Equatable {
         lhs.headerData == rhs.headerData
     }
 }
-public struct EmptyHeaderData: IdentifiableTappableItem, Equatable {
-    public let stringId: String = ""
+public struct EmptyHeaderData: IdentifiableItem, Equatable {
+    public let stringId: String
 }

@@ -82,8 +82,8 @@ final public class InfoCollectionViewCell: UICollectionViewCell, ConfigurableCel
         return view
     }()
 
-    public func updateViews(with collectionItem: any CollectionViewItem) {
-        guard let item = collectionItem.cellData as? InfoItemData else { return }
+    public func updateViews(with collectionItem: any IdentifiableItem) {
+        guard let item = collectionItem as? InfoItemData else { return }
         onButtonTap = item.onButtonTap
         titleLabel.text = item.title
         subtitleLabel.text = item.subtitle

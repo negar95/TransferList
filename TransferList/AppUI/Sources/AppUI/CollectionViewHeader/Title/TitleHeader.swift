@@ -18,15 +18,15 @@ public struct TitleHeader: CollectionViewHeader, Equatable {
         lhs.headerData == rhs.headerData
     }
 }
-public struct TitleHeaderData: IdentifiableTappableItem, Equatable {
+public struct TitleHeaderData: IdentifiableItem, Equatable {
     public let stringId: String
     public let title: String
 
     public init(
-        stringId: String,
+        stringId: InfoSectionId,
         title: String
     ) {
-        self.stringId = stringId
+        self.stringId = stringId.rawValue
         self.title = title
     }
 }

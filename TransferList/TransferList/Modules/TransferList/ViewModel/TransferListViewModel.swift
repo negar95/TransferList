@@ -12,17 +12,17 @@ import AppUI
 import AppFoundation
 
 final class TransferListViewModel: TransferListViewModelProtocol {
-    
+
     // MARK: - Constants
     private enum Constants {
         static let startPage: UInt = 1
         static let favoriteHeader: TitleHeader = TitleHeader(
             headerType: TitleHeaderView.self,
-            headerData: TitleHeaderData(stringId: "favorties", title: "Favorties")
+            headerData: TitleHeaderData(stringId: .favorites, title: "Favorties")
         )
         static let allHeader: TitleHeader = TitleHeader(
             headerType: TitleHeaderView.self,
-            headerData: TitleHeaderData(stringId: "all", title: "All")
+            headerData: TitleHeaderData(stringId: .all, title: "All")
         )
     }
 
@@ -94,13 +94,13 @@ final class TransferListViewModel: TransferListViewModelProtocol {
 
     // MARK: - Data Loading
     private func getTransfers() {
-        guard stateValue.sections != .isLoading()
+        guard stateValue.sections != .isLoading(), loadingTask == nil
         else { return Logger.info("Already loading transfers") }
         loadTransfers()
     }
-    
+
     private func reload(refreshing: Bool) {
-        guard stateValue.sections != .isLoading()
+        guard stateValue.sections != .isLoading(), loadingTask == nil
         else { return Logger.info("Already loading transfers") }
         loadingTask?.cancel()
         updateState(pageToFetch: .page(Constants.startPage), transfers: [], favorites: [])
@@ -188,10 +188,12 @@ final class TransferListViewModel: TransferListViewModelProtocol {
                     favorites: fetchedFavorites,
                     sections: sections
                 )
+                loadingTask = nil
             } catch let error {
                 guard !Task.isCancelled else { return Logger.info("Task cancelled") }
                 updateState(sections: .error(error.localizedDescription))
                 Logger.error("Error: ", error)
+                loadingTask = nil
             }
         }
     }
