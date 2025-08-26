@@ -43,7 +43,7 @@ public struct InfoItem: CollectionViewItem, Equatable {
         lhs.cellData == rhs.cellData
     }
 }
-public struct InfoItemData: IdentifiableTappableItem, Equatable {
+public struct InfoItemData: IdentifiableItem, Equatable {
     public let stringId: String
     public let title: String
     public let subtitle: String?

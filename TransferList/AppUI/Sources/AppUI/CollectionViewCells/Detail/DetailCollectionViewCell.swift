@@ -92,8 +92,8 @@ final public class DetailCollectionViewCell: UICollectionViewCell, ConfigurableC
         return view
     }()
 
-    public func updateViews(with collectionItem: any CollectionViewItem) {
-        guard let item = collectionItem.cellData as? DetailItemData else { return }
+    public func updateViews(with collectionItem: any IdentifiableItem) {
+        guard let item = collectionItem as? DetailItemData else { return }
         onButtonTap = item.onButtonTap
         titleLabel.text = item.title
         subtitleLabel.text = item.subtitle

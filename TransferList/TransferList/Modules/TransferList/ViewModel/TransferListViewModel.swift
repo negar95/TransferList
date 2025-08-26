@@ -12,17 +12,17 @@ import AppUI
 import AppFoundation
 
 final class TransferListViewModel: TransferListViewModelProtocol {
-    
+
     // MARK: - Constants
     private enum Constants {
         static let startPage: UInt = 1
         static let favoriteHeader: TitleHeader = TitleHeader(
             headerType: TitleHeaderView.self,
-            headerData: TitleHeaderData(stringId: "favorties", title: "Favorties")
+            headerData: TitleHeaderData(stringId: .favorites, title: "Favorties")
         )
         static let allHeader: TitleHeader = TitleHeader(
             headerType: TitleHeaderView.self,
-            headerData: TitleHeaderData(stringId: "all", title: "All")
+            headerData: TitleHeaderData(stringId: .all, title: "All")
         )
     }
 
@@ -94,13 +94,13 @@ final class TransferListViewModel: TransferListViewModelProtocol {
 
     // MARK: - Data Loading
     private func getTransfers() {
-        guard stateValue.sections != .isLoading()
+        guard stateValue.sections != .isLoading(), loadingTask == nil
         else { return Logger.info("Already loading transfers") }
         loadTransfers()
     }
-    
+
     private func reload(refreshing: Bool) {
-        guard stateValue.sections != .isLoading()
+        guard stateValue.sections != .isLoading(), loadingTask == nil
         else { return Logger.info("Already loading transfers") }
         loadingTask?.cancel()
         updateState(pageToFetch: .page(Constants.startPage), transfers: [], favorites: [])
@@ -113,10 +113,15 @@ final class TransferListViewModel: TransferListViewModelProtocol {
         withFavorites favorites: [DestinationResponse]
     ) -> Loadable<[InfoSection]> {
         let favoriteInfoItems = favorites.map { response in
-            let data = InfoItemData(response, type: .compact, onButtonTap:  { [weak self] in
-                guard let self else { return }
-                openDetail(for: response)
-            })
+            let data = InfoItemData(
+                response,
+                type: .compact,
+                sectionId: InfoSectionId.favorites.rawValue,
+                onButtonTap: { [weak self] in
+                    guard let self else { return }
+                    openDetail(for: response)
+                }
+            )
             let item = InfoItem(cellType: InfoCollectionViewCell.self, cellData: data)
             return item
         }
@@ -124,14 +129,14 @@ final class TransferListViewModel: TransferListViewModelProtocol {
             let isFavorite = favorites.contains(response)
             let data = InfoItemData(
                 response,
-                type: .detailed(isFavorite ? .filledStar : .star)
-            ) { [weak self] in
-                guard let self else { return }
-                openDetail(for: response)
-            } onButtonTap: { [weak self] in
-                guard let self else { return }
-                isFavorite ? removeFromFavorites(response.id) : addToFavorites(response.id)
-            }
+                type: .detailed(isFavorite ? .filledStar : .star),
+                sectionId: InfoSectionId.all.rawValue) { [weak self] in
+                    guard let self else { return }
+                    openDetail(for: response)
+                } onButtonTap: { [weak self] in
+                    guard let self else { return }
+                    isFavorite ? removeFromFavorites(response.id) : addToFavorites(response.id)
+                }
             let item = InfoItem(cellType: InfoCollectionViewCell.self, cellData: data)
             return item
         }
@@ -188,10 +193,12 @@ final class TransferListViewModel: TransferListViewModelProtocol {
                     favorites: fetchedFavorites,
                     sections: sections
                 )
+                loadingTask = nil
             } catch let error {
                 guard !Task.isCancelled else { return Logger.info("Task cancelled") }
                 updateState(sections: .error(error.localizedDescription))
                 Logger.error("Error: ", error)
+                loadingTask = nil
             }
         }
     }
@@ -230,11 +237,12 @@ fileprivate extension InfoItemData {
     init(
         _ destination: DestinationResponse,
         type: InfoItemType,
+        sectionId: String,
         onTap: (() -> Void)? = nil,
         onButtonTap: (() -> Void)? = nil
     ) {
         self.init(
-            stringId: destination.id + type.hashValue.description,
+            stringId: "\(destination.id)_\(sectionId)_\(type.hashValue)",
             title: destination.person.fullName,
             subtitle: destination.person.email,
             image: destination.person.avatar,
